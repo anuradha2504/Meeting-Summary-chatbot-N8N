@@ -42,7 +42,7 @@ flowchart TD
 
 ### 1) Clone Repository
 ```bash
-git clone https://github.com/your-repo/meeting-summarizer-chatbot.git
+git clone https://github.com/anuradha2504/Meeting-Summary-chatbot-N8N/tree/main
 cd meeting-summarizer-chatbot
 ```
 
