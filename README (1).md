@@ -74,14 +74,14 @@ n8n start
 Now users can send commands to the **Telegram bot** to get meeting summaries and answers.
 
 ## 📌 Example Usage
-- **User (Telegram):** “Summarize yesterday’s client meeting.”  
-- **Bot:** Fetches transcript → Summarizes key points → Provides action items.
-
-- **User (Telegram):** “What decisions were made in the last team sync?”  
+- **User (Telegram):** “who all attened the meeting ?.”  
 - **Bot:** Extracts decisions from transcript → Returns concise list.
 
-- **User (Telegram):** “Who was assigned which task?”  
-- **Bot:** Analyzes action items → Responds with assignments.
+- **User (Telegram):** “What HR discussion happended ?”  
+- **Bot:** Extracts decisions from transcript → Returns concise list.
+
+- **User (Telegram):** “What did ravi said for budget?”  
+- **Bot:** Extracts decisions from transcript → Returns concise list.
 
 ## 🧩 How It Works (Step-by-Step)
 1. **Google Drive** stores transcripts (uploaded from Zoom, MS Teams, Google Meet, etc.).
@@ -104,4 +104,4 @@ Now users can send commands to the **Telegram bot** to get meeting summaries and
 - 📊 Analytics dashboard for tracking recurring themes
 
 ## 👨‍💻 Author
-Built by **Your Name** using automation, AI, and workflow orchestration.
+Built by **Anuradha Kumari** using automation, AI, and workflow orchestration.
