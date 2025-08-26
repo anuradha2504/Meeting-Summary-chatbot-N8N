@@ -1,0 +1,233 @@
+{
+  "name": "n8n-meeting",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -352,
+        0
+      ],
+      "id": "a9ccb956-5a05-4dbc-970e-940f39dfc930",
+      "name": "Telegram Trigger",
+      "webhookId": "55c7ce79-a8d4-481f-a473-81c43af691ac",
+      "credentials": {
+        "telegramApi": {
+          "id": "n3QxjasZF8BpYTQw",
+          "name": "Telegram meeting"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "You are a meeting summary assistant. You Should Generate and summarise the answer only from the given context.\nIf context is irrelevant to the question, You should say, Sorry ! I can't find relevant information from the knowledge base. Don't provide any additional information\nYou should not generate or interpret any response from your knowledge"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -144,
+        0
+      ],
+      "id": "53be358c-2297-4859-a8ea-8b2c03c4176c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "mode": "list",
+          "value": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -288,
+        208
+      ],
+      "id": "2bbbe444-6714-4006-88dd-8ef3ae2675cb",
+      "name": "OpenAI Chat Model",
+      "credentials": {
+        "openAiApi": {
+          "id": "1ignONV8hTUEvvMp",
+          "name": "OpenAi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -144,
+        208
+      ],
+      "id": "e6a8d66d-ab6e-4f0e-8d16-7ee7ead7438c",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        208,
+        0
+      ],
+      "id": "6c4a0d05-82d0-4bd6-bf77-c63ebdaffdd1",
+      "name": "Send a text message",
+      "webhookId": "a95a67eb-303c-433b-ba7e-db39a2a722e3",
+      "credentials": {
+        "telegramApi": {
+          "id": "n3QxjasZF8BpYTQw",
+          "name": "Telegram meeting"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "retrieve-as-tool",
+        "toolDescription": "={{ $('Telegram Trigger').item.json.message.text }}",
+        "pineconeIndex": {
+          "__rl": true,
+          "value": "n8n-meeting",
+          "mode": "list",
+          "cachedResultName": "n8n-meeting"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.vectorStorePinecone",
+      "typeVersion": 1.3,
+      "position": [
+        48,
+        192
+      ],
+      "id": "c96e1963-1930-43a9-9cc9-559766de9d43",
+      "name": "Pinecone Vector Store",
+      "credentials": {
+        "pineconeApi": {
+          "id": "8CQAGEVCcjLIIxDy",
+          "name": "PineconeApi account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "dimensions": 512
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.embeddingsOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        -16,
+        320
+      ],
+      "id": "bdb853ef-5dc4-48ef-b249-dcdabf39c6c4",
+      "name": "Embeddings OpenAI",
+      "credentials": {
+        "openAiApi": {
+          "id": "1ignONV8hTUEvvMp",
+          "name": "OpenAi account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Pinecone Vector Store": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Embeddings OpenAI": {
+      "ai_embedding": [
+        [
+          {
+            "node": "Pinecone Vector Store",
+            "type": "ai_embedding",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "607a7d7e-e8b8-4a54-8427-a72fb9ba2d4f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "719d9d7d69c9ebea1d9b301d937a2b0185bb35b525816e9337a8c5b937c19955"
+  },
+  "id": "Amv4ztfQ3scdY4zI",
+  "tags": []
+}
